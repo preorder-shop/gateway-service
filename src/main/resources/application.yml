@@ -1,0 +1,38 @@
+server:
+  port: 8000
+
+# ==== 추후 eureka 연동 & load balancer 기능 추가할때 사용 ====
+eureka:
+  client:
+    register-with-eureka: true # register gateway server in eureka server
+    fetch-registry: true
+    service-url:
+      defaultZone: http://admin:1234@localhost:8761/eureka # eureka server ip
+
+
+spring:
+  application:
+    name: api-gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: http://localhost:8081/ # 전송할 ip <- 특정 포트 하나만 사용할때
+          predicates:
+            - Path=/users/**  # 해당 url 패턴으로 요청시
+          filters:
+            - AddRequestHeader=first-request,first-request-header2!!
+            - AddResponseHeader=first-response, first-response-header2!!
+            - CustomFilter
+#        - id: activity-service
+#          uri: http://localhost:8082/ # 전송할 ip
+#          predicates:
+#            - Path=/activity/** # 해당 url로 요청시
+#        - id: newsfeed-service
+#          uri: http://localhost:8083/ # 전송할 ip
+#          predicates:
+#            - Path=/feeds/** # 해당 url로 요청시
+#        - id: payment-service
+#          uri: http://localhost:8084/ # 전송할 ip
+#          predicates:
+#              - Path=/payments/** # 해당 url로 요청시
