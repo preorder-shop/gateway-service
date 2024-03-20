@@ -1,7 +1,5 @@
 server:
   port: 8000
-
-# ==== 추후 eureka 연동 & load balancer 기능 추가할때 사용 ====
 eureka:
   client:
     register-with-eureka: true # register gateway server in eureka server
@@ -17,22 +15,44 @@ spring:
     gateway:
       routes:
         - id: user-service
-          uri: http://localhost:8081/ # 전송할 ip <- 특정 포트 하나만 사용할때
+          uri: http://localhost:8081/ # 전송할 ip
           predicates:
-            - Path=/users/**  # 해당 url 패턴으로 요청시
+            - Path=/users/login  # 로그인
+            - Method=POST
           filters:
-            - AddRequestHeader=first-request,first-request-header2!!
-            - AddResponseHeader=first-response, first-response-header2!!
-            - CustomFilter
-#        - id: activity-service
-#          uri: http://localhost:8082/ # 전송할 ip
-#          predicates:
-#            - Path=/activity/** # 해당 url로 요청시
-#        - id: newsfeed-service
-#          uri: http://localhost:8083/ # 전송할 ip
-#          predicates:
-#            - Path=/feeds/** # 해당 url로 요청시
-#        - id: payment-service
-#          uri: http://localhost:8084/ # 전송할 ip
-#          predicates:
-#              - Path=/payments/** # 해당 url로 요청시
+            - RemoveRequestHeader=Cookie # 쿠키에 대한 정보 삭제
+        - id: user-service
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/users/signup # 회원가입
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+        - id: user-service
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/users/email-certification # 인증코드 전송
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+        - id: user-service
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/users/email-code-check # 인증코드 확인
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+        - id: user-service
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/users/reissue   # access token 재발급
+        - id: user-service
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/users/**
+          filters:
+            - AuthorizationHeaderFilter
+  profiles:
+    include: config
+
+
