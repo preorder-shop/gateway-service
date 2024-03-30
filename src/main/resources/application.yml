@@ -1,5 +1,5 @@
 server:
-  port: 8000
+  port: 8080
 eureka:
   client:
     register-with-eureka: true # register gateway server in eureka server
@@ -35,13 +35,13 @@ spring:
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
-        - id: user-service
-          uri: http://localhost:8081/
-          predicates:
-            - Path=/users/email-code-check # 인증코드 확인
-            - Method=POST
-          filters:
-            - RemoveRequestHeader=Cookie
+#        - id: user-service
+#          uri: http://localhost:8081/
+#          predicates:
+#            - Path=/users/email-code-check # 인증코드 확인
+#            - Method=POST
+#          filters:
+#            - RemoveRequestHeader=Cookie
         - id: user-service
           uri: http://localhost:8081/
           predicates:
@@ -52,6 +52,41 @@ spring:
             - Path=/users/**
           filters:
             - AuthorizationHeaderFilter
+
+        - id: activity-service
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/activity/**
+          filters:
+            - AuthorizationHeaderFilter
+
+        - id: newsfeed-service
+          uri: http://localhost:8083/
+          predicates:
+            - Path=/newsfeeds/**
+          filters:
+            - AuthorizationHeaderFilter
+
+        - id: product-service
+          uri: http://localhost:8084/
+          predicates:
+            - Path=/products/**
+
+        - id: stock-service
+          uri: http://localhost:8085/
+          predicates:
+            - Path=/stocks/**
+
+        - id: payment-service
+          uri: http://localhost:8086/
+          predicates:
+            - Path=/payments/**
+
+        - id: purchase-service
+          uri: http://localhost:8087/
+          predicates:
+            - Path=/purchases/**
+
   profiles:
     include: config
 
